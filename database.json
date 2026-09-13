@@ -1,0 +1,10 @@
+{
+    "dev": {
+        "driver": "pg",
+        "user": "User",
+        "password": "sept",
+        "host": "localhost",
+        "database": "user_ecommerce",
+        "port": "5432"
+    }
+}
