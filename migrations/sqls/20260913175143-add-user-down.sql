@@ -1,1 +1,2 @@
-/* Replace with your SQL commands */
+DROP TYPE IF EXISTS Gender;
+DROP TABLE IF EXISTS Users;
