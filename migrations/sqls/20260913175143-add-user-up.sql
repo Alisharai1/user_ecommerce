@@ -1,4 +1,4 @@
-CREATE TYPE Gender AS ENUM('male','female','others');
+CREATE TYPE Gender AS ENUM('male','female','other');
 
 CREATE TABLE IF NOT EXISTS Users(
     id UUID PRIMARY KEY ,

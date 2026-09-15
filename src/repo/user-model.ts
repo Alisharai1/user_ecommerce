@@ -1,7 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import { db } from '../index'
-import { Gender } from "../enum-gender";
-
+import { Gender } from "../model";
 export class UserDb extends Model { }
 
 UserDb.init(
@@ -28,11 +27,9 @@ UserDb.init(
             }
         },
         gender: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            validate: {
-                isIn: [Object.values(Gender)]
-            }
+            type: DataTypes.ENUM,
+            values: (Object.values(Gender)),
+            allowNull: false
         },
         password: {
             type: DataTypes.STRING,
@@ -40,7 +37,7 @@ UserDb.init(
         },
         phone: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         createdAt: {
             type: DataTypes.DATE,

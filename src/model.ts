@@ -1,4 +1,3 @@
-import { Gender } from "../enum-gender"
 
 export type User = {
     id: string,
@@ -10,4 +9,10 @@ export type User = {
     phone: string,
     createdAt: Date,
     updatedAt: Date
+}
+
+export enum Gender {
+    MALE = "male",
+    FEMALE = "female",
+    OTHER = "other"
 }
