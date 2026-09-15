@@ -5,10 +5,11 @@ import { Database } from "./repo/db"
 const app = express()
 
 const port = 3000
+
 app.use(express.json())
+
 app.get('/liveCheck', (_req: Request, res: Response) => {
     res.status(200).json({ message: "my test endpoint" })
-
 })
 
 export const db = Database.Connection({

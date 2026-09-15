@@ -1,13 +1,14 @@
 import { User } from "../model"
-export interface IUserRepo {
 
-    getUserById(id: string): Promise<User | null>
 
-    query(input: { limit: number, offset: number }): Promise<User[]>
+export interface IUserService {
+    getUserById(id: string): Promise<User>
+
+    getAllUsers(input: { limit: number, offset: number }): Promise<User[]>
 
     createUser(input: User): Promise<User>
 
-    getUserByEmail(email: string): Promise<User | null>
+    getUserByEmail(email: string): Promise<User>
 
     updateUser(input: {
         id: string, firstName: string, lastName: string, phone: string
