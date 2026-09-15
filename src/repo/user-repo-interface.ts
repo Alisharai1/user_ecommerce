@@ -4,11 +4,11 @@ export interface IUserRepo {
 
     getUserById(id: string): Promise<User | null>
 
-    query(): Promise<User[]>
+    query(input: { limit: number, offset: number }): Promise<User[]>
 
-    createUser(): Promise<User>
+    createUser(input: User): Promise<User>
 
-    getUserByEmail(): Promise<User | null>
+    getUserByEmail(email: string): Promise<User | null>
 
     updateUser(input: {
         id: string, firstName: string, lastName: string, phone: string

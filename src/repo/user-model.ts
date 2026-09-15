@@ -28,8 +28,9 @@ UserDb.init(
         },
         gender: {
             type: DataTypes.ENUM,
-            values: (Object.values(Gender)),
-            allowNull: false
+            allowNull: false,
+            values: Object.values(Gender),
+
         },
         password: {
             type: DataTypes.STRING,
