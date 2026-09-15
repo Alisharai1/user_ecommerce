@@ -22,6 +22,6 @@ define user interface
 set up express and test the connection
 connect sequelize to database and setup the connection details
 define user model using Sequelize
-create repo layer using sequelize and implement the interfaces
+create repo layer using sequelize
 
 
