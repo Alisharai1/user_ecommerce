@@ -1,10 +1,10 @@
-import { User } from "./model";
+import { User } from "../model";
 
 export interface IUserRepo {
 
     getUserById(id: string): Promise<User | null>
 
-    getAllUsers(): Promise<User[]>
+    query(): Promise<User[]>
 
     createUser(): Promise<User>
 
@@ -12,7 +12,7 @@ export interface IUserRepo {
 
     updateUser(input: {
         id: string, firstName: string, lastName: string, phone: string
-    }): Promise<User | null>
+    }): Promise<User>
 
     deleteUser(id: string): Promise<boolean>
 

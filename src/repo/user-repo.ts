@@ -1,4 +1,4 @@
-import { User } from "./model";
+import { User } from "../model";
 import { IUserRepo } from "./user-repo-interface";
 import { UserDb } from "./user-model";
 
@@ -10,7 +10,7 @@ export class UserRepo implements IUserRepo {
         }
         return user.toJSON<User>()
     }
-    getAllUsers(): Promise<User[]> {
+    query(): Promise<User[]> {
         throw new Error("Method not implemented.");
     }
     createUser(): Promise<User> {
@@ -19,7 +19,7 @@ export class UserRepo implements IUserRepo {
     getUserByEmail(): Promise<User | null> {
         throw new Error("Method not implemented.");
     }
-    updateUser(input: { id: string; firstName: string; lastName: string; phone: string; }): Promise<User | null> {
+    updateUser(input: { id: string; firstName: string; lastName: string; phone: string; }): Promise<User> {
         throw new Error("Method not implemented.");
     }
     deleteUser(id: string): Promise<boolean> {
