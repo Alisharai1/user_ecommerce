@@ -1,5 +1,4 @@
-import { User } from "../model";
-
+import { User } from "../model"
 export interface IUserRepo {
 
     getUserById(id: string): Promise<User | null>
