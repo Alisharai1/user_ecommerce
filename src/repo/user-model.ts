@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
-import { db } from '../index'
-import { Gender } from "../model"
+import { db } from "./database-connection";
+import { GENDER } from "../model"
 
 export class UserDb extends Model { }
 
@@ -30,7 +30,7 @@ UserDb.init(
         gender: {
             type: DataTypes.ENUM,
             allowNull: false,
-            values: Object.values(Gender)
+            values: Object.values(GENDER)
 
         },
         password: {

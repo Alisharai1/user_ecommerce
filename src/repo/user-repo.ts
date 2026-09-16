@@ -19,10 +19,10 @@ export class UserRepo implements IUserRepo {
     getUserByEmail(): Promise<User | null> {
         throw new Error("Method not implemented.");
     }
-    updateUser(input: { id: string; firstName: string; lastName: string; phone: string; }): Promise<User> {
+    updateUser(_input: { id: string; firstName: string; lastName: string; phone: string; }): Promise<User> {
         throw new Error("Method not implemented.");
     }
-    deleteUser(id: string): Promise<boolean> {
+    deleteUser(_id: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 
