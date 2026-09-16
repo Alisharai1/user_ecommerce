@@ -2,7 +2,12 @@ import { User } from "../model";
 import { IUserService } from "./user-service-interface";
 import { IUserRepo } from "../repo/user-repo-interface";
 
-export class UserService implements IUserService{
+export class UserService implements IUserService {
+
+    private readonly userRepo: IUserRepo
+    constructor(userRepo: IUserRepo) {
+        this.userRepo = userRepo
+    }
     getUserById(id: string): Promise<User> {
         throw new Error("Method not implemented.");
     }
@@ -21,5 +26,5 @@ export class UserService implements IUserService{
     deleteUser(id: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
-    
+
 }
