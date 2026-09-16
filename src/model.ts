@@ -4,14 +4,14 @@ export type User = {
     firstName: string,
     lastName: string,
     email: string,
-    gender: Gender,
+    gender: GENDER,
     password: string,
     phone: string,
     createdAt: Date,
     updatedAt: Date
 }
 
-export enum Gender {
+export enum GENDER {
     MALE = "male",
     FEMALE = "female",
     OTHER = "other"
