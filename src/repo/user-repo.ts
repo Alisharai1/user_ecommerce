@@ -10,15 +10,24 @@ export class UserRepo implements IUserRepo {
         }
         return user.toJSON<User>()
     }
+
     query(): Promise<User[]> {
         throw new Error("Method not implemented.");
     }
-    createUser(): Promise<User> {
-        throw new Error("Method not implemented.");
+
+    async createUser(input: User): Promise<User> {
+        const user = await UserDb.create({ firstName: input.firstName, lastName: input.lastName, email: input.email, gender: input.gender, password: input.password, phone: input.phone })
+        return user.toJSON<User>()
     }
-    getUserByEmail(): Promise<User | null> {
-        throw new Error("Method not implemented.");
+
+    async getUserByEmail(email: string): Promise<User | null> {
+        const user = await UserDb.findOne({ where: { email: email } })
+        if (!user) {
+            return null
+        }
+        return user.toJSON<User>()
     }
+    
     updateUser(_input: { id: string; firstName: string; lastName: string; phone: string; }): Promise<User> {
         throw new Error("Method not implemented.");
     }

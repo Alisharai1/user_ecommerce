@@ -6,7 +6,7 @@ export type User = {
     email: string,
     gender: GENDER,
     password: string,
-    phone: string,
+    phone?: string,
     createdAt: Date,
     updatedAt: Date
 }
