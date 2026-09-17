@@ -1,4 +1,4 @@
-import { User } from "../model"
+import { GENDER, User } from "../model"
 
 
 export interface IUserService {
@@ -6,7 +6,7 @@ export interface IUserService {
 
     getAllUsers(input: { limit: number, offset: number }): Promise<User[]>
 
-    createUser(input: User): Promise<User>
+    createUser(input: { firstName: string, lastName: string, email: string, gender: GENDER, password: string, phone?: string }): Promise<User>
 
     getUserByEmail(email: string): Promise<User>
 

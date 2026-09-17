@@ -2,15 +2,17 @@ import { IUserService } from "../service/user-service-interface";
 import { Request, Response } from "express";
 import {
     createUserBodySchema,
-    // getUserByIdParamsSchema,
+    getUserByIdParamsSchema,
     // getAllUsersSchema,
-    // getUserByEmailQuerySchema,
+    getUserByEmailQuerySchema,
     // updateUserBodySchema,
     // deleteUserByIdParamsSchema
 }
     from "./user.dto";
 import { ValidationError } from "yup";
 import { Router } from "express";
+import { DuplicateUserException } from "../exception/duplicate-user";
+import { UserNotFoundException } from "../exception/user-not-found";
 
 
 export class UserController {
@@ -24,27 +26,78 @@ export class UserController {
         const router = Router()
         const controller = new UserController(userService)
         router.post('/', controller.createUser)
+        router.get('/useremail', controller.getUserByEmail)
+        router.get('/:id', controller.getUserById)
 
         return router
     }
 
 
-    async createUser(req: Request, res: Response) {
+    createUser = async (req: Request, res: Response) => {
         try {
-            await createUserBodySchema.validateSync(req.body, { abortEarly: false, strict: true })
-            console.log(this.userService);
+            const input = createUserBodySchema.validateSync(req.body, { abortEarly: false, strict: true })
 
+            const user = await this.userService.createUser(input)
+            res.status(200).json(user)
         } catch (error) {
+            console.log("hiiiiii", error);
 
             if (error instanceof ValidationError) {
                 res.status(400).json(error.errors)
             }
+            else if (error instanceof DuplicateUserException) {
+                res.status(400).json({ message: "duplicate user found" })
+            }
             else {
+                console.log("hello", error);
+
                 res.status(500).json({ message: "internal server error" })
             }
         }
     }
 
+    getUserById = async (req: Request, res: Response) => {
+        try {
+            const input = getUserByIdParamsSchema.validateSync(req.params, { abortEarly: false, strict: true })
 
+            const user = await this.userService.getUserById(input.id)
+            res.status(200).json(user)
 
+        } catch (error) {
+            console.log(error);
+
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            }
+            else if (error instanceof UserNotFoundException) {
+                res.status(400).json({ message: "user not found" })
+            }
+            else {
+                console.log("heyyyy", error);
+
+                res.status(500).json({ message: "internal server error" })
+            }
+        }
+    }
+
+    getUserByEmail = async (req: Request, res: Response) => {
+        try {
+            const input = getUserByEmailQuerySchema.validateSync(req.query, { abortEarly: false, strict: true })
+            const user = await this.userService.getUserByEmail(input.email)
+            res.status(200).json(user)
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            }
+            else if (error instanceof UserNotFoundException) {
+                res.status(400).json({ message: "user not found" })
+            }
+            else {
+                res.status(500).json({ message: "internal server error" })
+            }
+        }
+
+    }
 }
+
+

@@ -7,17 +7,20 @@ export class UserDb extends Model { }
 UserDb.init(
     {
         id: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
             allowNull: false,
             primaryKey: true
         },
         firstName: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            field: 'first_name'
         },
         lastName: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            field: 'last_name'
         },
         email: {
             type: DataTypes.STRING,
@@ -45,15 +48,17 @@ UserDb.init(
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
             allowNull: false,
+            field: 'created_at'
         },
         updatedAt: {
             type: DataTypes.DATE,
             allowNull: false,
-            defaultValue: DataTypes.NOW
+            defaultValue: DataTypes.NOW,
+            field: 'updated_at'
         }
     },
     {
         sequelize: db,
-        modelName: 'UserDb'
+        tableName: 'users'
     }
 )
