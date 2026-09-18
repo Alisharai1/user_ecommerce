@@ -11,6 +11,7 @@ export class UserService implements IUserService {
         this.userRepo = userRepo
 
     }
+
     async getUserById(id: string): Promise<User> {
         const user = await this.userRepo.getUserById(id)
         if (!user) {
@@ -18,9 +19,11 @@ export class UserService implements IUserService {
         }
         return user
     }
-    
-    getAllUsers(_input: { limit: number; offset: number; }): Promise<User[]> {
-        throw new Error("Method not implemented.");
+
+    async getAllUsers(input: { limit: number; page: number; }): Promise<User[]> {
+        const offset = input.limit * (input.page - 1)
+        const users = await this.userRepo.query({ limit: input.limit || 5, offset })
+        return users.map((user) => user)
     }
 
     async createUser(input: { firstName: string, lastName: string, email: string, gender: GENDER, password: string, phone?: string }): Promise<User> {
@@ -28,12 +31,13 @@ export class UserService implements IUserService {
         if (existingUser) {
             throw new DuplicateUserException("user already exist")
         }
-        const newUser = await this.userRepo.createUser({...input,
+        const newUser = await this.userRepo.createUser({
+            ...input,
             id: v4(),
             createdAt: new Date(),
             updatedAt: new Date()
         })
-        return {...newUser}
+        return { ...newUser }
     }
 
     async getUserByEmail(email: string): Promise<User> {
@@ -44,11 +48,24 @@ export class UserService implements IUserService {
         return user
     }
 
-    updateUser(_input: { id: string; firstName: string; lastName: string; phone: string; }): Promise<User> {
-        throw new Error("Method not implemented.");
+    async updateUser(input: { id: string; firstName: string; lastName: string;}): Promise<User | null> {
+        const user = await this.userRepo.getUserById(input.id)
+        if (!user) {
+            throw new UserNotFoundException("user not found")
+        }
+        const updatedUser = await this.userRepo.updateUser(input)
+        if (!updatedUser) {
+            throw new UserNotFoundException("user not found")
+        }
+        return { ...updatedUser }
     }
-    deleteUser(_id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+
+    async deleteUser(id: string): Promise<boolean> {
+        const user = await this.userRepo.getUserById(id)
+        if (!user) {
+            throw new UserNotFoundException("user not found")
+        }
+        return await this.userRepo.deleteUser(id)
     }
 
 }

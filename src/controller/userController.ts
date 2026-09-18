@@ -3,10 +3,10 @@ import { Request, Response } from "express";
 import {
     createUserBodySchema,
     getUserByIdParamsSchema,
-    // getAllUsersSchema,
+    getAllUsersSchema,
     getUserByEmailQuerySchema,
-    // updateUserBodySchema,
-    // deleteUserByIdParamsSchema
+    updateUserBodySchema,
+    deleteUserByIdParamsSchema
 }
     from "./user.dto";
 import { ValidationError } from "yup";
@@ -28,6 +28,9 @@ export class UserController {
         router.post('/', controller.createUser)
         router.get('/useremail', controller.getUserByEmail)
         router.get('/:id', controller.getUserById)
+        router.get('/', controller.getAllUsers)
+        router.put('/:id', controller.updateUser)
+        router.delete('/:id', controller.deleteUser)
 
         return router
     }
@@ -96,7 +99,64 @@ export class UserController {
                 res.status(500).json({ message: "internal server error" })
             }
         }
+    }
 
+    getAllUsers = async (req: Request, res: Response) => {
+        try {
+            const input = getAllUsersSchema.validateSync(req.query, { abortEarly: false })
+            const users = await this.userService.getAllUsers(input)
+            res.status(200).json(users)
+        } catch (error) {
+            console.log("today", error);
+
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            }
+            else {
+                res.status(500).json({ message: "internal server error" })
+            }
+        }
+    }
+
+    deleteUser = async (req: Request, res: Response) => {
+        try {
+            const input = deleteUserByIdParamsSchema.validateSync(req.params, { abortEarly: false, strict: true })
+
+            await this.userService.deleteUser(input.id)
+            res.status(200).json({ message: "user deleted successfully" })
+        } catch (error) {
+            console.log(error);
+
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            }
+            else if (error instanceof UserNotFoundException) {
+                res.status(400).json({ message: "user not found" })
+            }
+            else {
+                res.status(500).json({ message: "internal server error" })
+            }
+        }
+    }
+
+    updateUser = async (req: Request, res: Response) => {
+        try {
+            const input = updateUserBodySchema.validateSync(req.body, { abortEarly: false, strict: true })
+            const updatedUser = await this.userService.updateUser(input)
+            res.status(200).json(updatedUser)
+        } catch (error) {
+            console.log(error);
+            
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            }
+            else if (error instanceof UserNotFoundException) {
+                res.status(400).json({ message: "user not found" })
+            }
+            else {
+                res.status(500).json({ message: "internal server error" })
+            }
+        }
     }
 }
 

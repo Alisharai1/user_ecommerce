@@ -15,8 +15,8 @@ export const getUserByIdParamsSchema = object({
 })
 
 export const getAllUsersSchema = object({
-    limit: number().positive().integer().required(),
-    offset: number().positive().integer().required()
+    limit: number().positive().integer().default(5),
+    page: number().positive().integer().default(1)
 })
 
 export const getUserByEmailQuerySchema = object({
@@ -24,8 +24,9 @@ export const getUserByEmailQuerySchema = object({
 })
 
 export const updateUserBodySchema = object({
+    id: string().uuid().required(),
+    firstName: string().required(),
     lastName: string().required(),
-    phone: string()
 })
 
 export const deleteUserByIdParamsSchema = object({
