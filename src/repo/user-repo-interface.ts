@@ -10,8 +10,7 @@ export interface IUserRepo {
     getUserByEmail(email: string): Promise<User | null>
 
     updateUser(input: {
-        id: string, firstName: string, lastName: string, phone: string
-    }): Promise<User>
+        id: string, firstName: string, lastName: string}): Promise<User|null>
 
     deleteUser(id: string): Promise<boolean>
 
