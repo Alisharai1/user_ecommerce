@@ -22,7 +22,6 @@ app.get('/liveCheck', (_req: Request, res: Response) => {
     res.status(200).json({ message: "my test endpoint" })
 })
 
-
 bootstrap(app)
 
 
@@ -30,3 +29,4 @@ app.listen(port, async () => {
     console.log("app is up and running fine");
 
 })
+

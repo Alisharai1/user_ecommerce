@@ -4,12 +4,29 @@ import { IUserService } from "./user-service-interface";
 import { UserNotFoundException } from "../exception/user-not-found";
 import { DuplicateUserException } from "../exception/duplicate-user";
 import { v4 } from "uuid";
+import { InvalidCredentialError } from "../exception/Invalid-cred";
+import bcryptjs from "bcryptjs"
+import jwt from "jsonwebtoken"
+
 export class UserService implements IUserService {
 
     private readonly userRepo: IUserRepo
     constructor(userRepo: IUserRepo) {
         this.userRepo = userRepo
 
+    }
+
+    async login(input: { email: string; password: string; }): Promise<{ token: string; userId: string }> {
+        const existingUser = await this.userRepo.getUserByEmail(input.email)
+        if (!existingUser || !existingUser.password) {
+            throw new InvalidCredentialError("invalid credentials")
+        }
+        const output = await bcryptjs.compare(input.password, existingUser.password)
+        if (!output) {
+            throw new InvalidCredentialError("invalid credentials")
+        }
+        const token = jwt.sign({ userId: existingUser.id }, process.env.JWT_SECRET!, { expiresIn: '1d' })
+        return { token, userId: existingUser.id }
     }
 
     async getUserById(id: string): Promise<User> {
@@ -48,7 +65,7 @@ export class UserService implements IUserService {
         return user
     }
 
-    async updateUser(input: { id: string; firstName: string; lastName: string;}): Promise<User | null> {
+    async updateUser(input: { id: string; firstName: string; lastName: string; }): Promise<User | null> {
         const user = await this.userRepo.getUserById(input.id)
         if (!user) {
             throw new UserNotFoundException("user not found")
