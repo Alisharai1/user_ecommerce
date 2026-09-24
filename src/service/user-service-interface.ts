@@ -11,8 +11,10 @@ export interface IUserService {
     getUserByEmail(email: string): Promise<User>
 
     updateUser(input: {
-        id: string, firstName: string, lastName: string}): Promise<User|null>
+        id: string, firstName: string, lastName: string
+    }): Promise<User | null>
 
     deleteUser(id: string): Promise<boolean>
 
+    login(input: { email: string, password: string }): Promise<{ token: string, userId: string }>
 }
