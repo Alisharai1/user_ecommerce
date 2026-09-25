@@ -17,4 +17,6 @@ export interface IUserService {
     deleteUser(id: string): Promise<boolean>
 
     login(input: { email: string, password: string }): Promise<{ token: string, userId: string }>
+
+    forgotPassword(input: { email: string, password: string }): Promise<void>
 }

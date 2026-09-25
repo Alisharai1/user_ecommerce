@@ -1,6 +1,10 @@
 import { object, number, string } from "yup"
 import { GENDER } from "../model"
 
+export const forgotPasswordSchema = object({
+    email: string().email().required()
+})
+
 export const createUserBodySchema = object({
     firstName: string().required(),
     lastName: string().required(),

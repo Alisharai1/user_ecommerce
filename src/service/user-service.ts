@@ -16,6 +16,16 @@ export class UserService implements IUserService {
 
     }
 
+    async forgotPassword(input: { email: string }): Promise<void> {
+        const existingUser = await this.userRepo.getUserByEmail(input.email)
+        if (!existingUser) {
+            return
+        }
+        
+
+
+    }
+
     async login(input: { email: string; password: string; }): Promise<{ token: string; userId: string }> {
         const existingUser = await this.userRepo.getUserByEmail(input.email)
         if (!existingUser || !existingUser.password) {
