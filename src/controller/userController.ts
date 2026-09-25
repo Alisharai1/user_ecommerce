@@ -6,7 +6,8 @@ import {
     getAllUsersSchema,
     getUserByEmailQuerySchema,
     updateUserBodySchema,
-    deleteUserByIdParamsSchema
+    deleteUserByIdParamsSchema,
+    forgotPasswordSchema
 }
     from "./user.dto";
 import { ValidationError } from "yup";
@@ -31,8 +32,25 @@ export class UserController {
         router.get('/', controller.getAllUsers)
         router.put('/:id', controller.updateUser)
         router.delete('/:id', controller.deleteUser)
+        router.post('/forgot-password', controller.forgotPassword)
 
         return router
+    }
+
+    forgotPassword = async (req: Request, res: Response) => {
+        try {
+            const input = forgotPasswordSchema.validateSync(req.body, { abortEarly: false, strict: true })
+
+
+            console.log(input);
+
+
+        }
+
+        catch (error) {
+
+        }
+
     }
 
 
