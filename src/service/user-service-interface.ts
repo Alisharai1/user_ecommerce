@@ -18,5 +18,7 @@ export interface IUserService {
 
     login(input: { email: string, password: string }): Promise<{ token: string, userId: string }>
 
-    forgotPassword(input: { email: string, password: string }): Promise<void>
+    forgotPassword(input: { email: string }): Promise<string>
+
+    updatePassword(input: { email: string, otp:string, newPassword: string }): Promise<string>
 }

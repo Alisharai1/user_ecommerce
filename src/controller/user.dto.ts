@@ -5,6 +5,13 @@ export const forgotPasswordSchema = object({
     email: string().email().required()
 })
 
+export const resetPasswordSchema = object({
+    email: string().email().required(),
+    otp: string().min(6).max(12).required(),
+    newPassword: string().required().min(8).max(20),
+
+})
+
 export const createUserBodySchema = object({
     firstName: string().required(),
     lastName: string().required(),

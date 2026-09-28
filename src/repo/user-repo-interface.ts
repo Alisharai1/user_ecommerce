@@ -10,8 +10,13 @@ export interface IUserRepo {
     getUserByEmail(email: string): Promise<User | null>
 
     updateUser(input: {
-        id: string, firstName: string, lastName: string}): Promise<User|null>
+        id: string, firstName: string, lastName: string
+    }): Promise<User | null>
 
     deleteUser(id: string): Promise<boolean>
+
+    saveOtp(input: { id: string, otp: string, otpExpiryTime: Date }): Promise<void>
+
+    updatePassword(input: { id: string, hashedPassword: string }):Promise<void>
 
 }

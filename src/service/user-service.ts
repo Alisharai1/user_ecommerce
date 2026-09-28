@@ -7,22 +7,57 @@ import { v4 } from "uuid";
 import { InvalidCredentialError } from "../exception/Invalid-cred";
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { randomInt } from "crypto";
+import { InvalidOtpException } from "../exception/Invalidotp";
+import { OtpExpiredException } from "../exception/otpexpired";
+import { OtpNotFoundException } from "../exception/otp-not-found";
 
+const salt = bcryptjs.genSaltSync(10);
 export class UserService implements IUserService {
 
     private readonly userRepo: IUserRepo
     constructor(userRepo: IUserRepo) {
         this.userRepo = userRepo
-
     }
 
-    async forgotPassword(input: { email: string }): Promise<void> {
+    async updatePassword(input: { email: string; otp: string, newPassword: string; }): Promise<string> {
         const existingUser = await this.userRepo.getUserByEmail(input.email)
         if (!existingUser) {
-            return
+            throw new UserNotFoundException("user not found")
         }
-        
+        if (!existingUser.otp) {
+            throw new OtpNotFoundException("OTP not found")
+        }
+        if (existingUser.otp !== input.otp) {
+            throw new InvalidOtpException("invalid otp")
+        }
+        if (!existingUser.otpExpiryTime) {
+            throw new Error("otp expiry time not found")
+        }
 
+        if (new Date() > existingUser.otpExpiryTime) {
+            throw new OtpExpiredException("otp has expired")
+        }
+        const hashedPassword = await bcryptjs.hash(input.newPassword, 10);
+
+        await this.userRepo.updatePassword({ id: existingUser.id, hashedPassword: hashedPassword })
+
+        return "Password updated successfully";
+    }
+
+    async forgotPassword(input: { email: string }): Promise<string> {
+        const existingUser = await this.userRepo.getUserByEmail(input.email)
+        if (!existingUser) {
+            throw new UserNotFoundException("user not found")
+        }
+
+        const otp = randomInt(100000, 1000000).toString();
+
+        const otpExpiryTime = new Date(Date.now() + 10 * 60 * 1000)
+
+        await this.userRepo.saveOtp({ id: existingUser.id, otp, otpExpiryTime })
+
+        return "otp generated successfully"
 
     }
 
@@ -48,7 +83,8 @@ export class UserService implements IUserService {
     }
 
     async getAllUsers(input: { limit: number; page: number; }): Promise<User[]> {
-        const offset = input.limit * (input.page - 1)
+        const limit = input.limit || 5;
+        const offset = limit * (input.page - 1)
         const users = await this.userRepo.query({ limit: input.limit || 5, offset })
         return users.map((user) => user)
     }
@@ -58,11 +94,16 @@ export class UserService implements IUserService {
         if (existingUser) {
             throw new DuplicateUserException("user already exist")
         }
+        const hash = bcryptjs.hashSync(input.password, salt);
+
         const newUser = await this.userRepo.createUser({
             ...input,
             id: v4(),
+            password: hash,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            otpExpiryTime: null,
+            otp: null
         })
         return { ...newUser }
     }

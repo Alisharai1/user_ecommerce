@@ -3,6 +3,20 @@ import { IUserRepo } from "./user-repo-interface";
 import { UserDb } from "./user-model";
 
 export class UserRepo implements IUserRepo {
+    async updatePassword(input: { id: string; hashedPassword: string; }): Promise<void> {
+        await UserDb.update({ password: input.hashedPassword, otp: null, otpExpiryTime: null }, { where: { id: input.id } })
+    }
+
+    async saveOtp(input: { id: string, otp: string, otpExpiryTime: Date }): Promise<void> {
+        await UserDb.update({
+            otp: input.otp,
+            otpExpiryTime: input.otpExpiryTime
+        }, {
+            where: {
+                id: input.id
+            }
+        })
+    }
 
     async getUserById(id: string): Promise<User | null> {
         const user = await UserDb.findOne({ where: { id: id } })
