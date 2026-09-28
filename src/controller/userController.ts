@@ -7,13 +7,16 @@ import {
     getUserByEmailQuerySchema,
     updateUserBodySchema,
     deleteUserByIdParamsSchema,
-    forgotPasswordSchema
+    forgotPasswordSchema,
+    resetPasswordSchema
 }
     from "./user.dto";
 import { ValidationError } from "yup";
 import { Router } from "express";
 import { DuplicateUserException } from "../exception/duplicate-user";
 import { UserNotFoundException } from "../exception/user-not-found";
+import { InvalidOtpException } from "../exception/Invalidotp";
+import { OtpExpiredException } from "../exception/otpexpired";
 
 
 export class UserController {
@@ -33,6 +36,7 @@ export class UserController {
         router.put('/:id', controller.updateUser)
         router.delete('/:id', controller.deleteUser)
         router.post('/forgot-password', controller.forgotPassword)
+        router.post('/reset-password', controller.resetPassword)
 
         return router
     }
@@ -40,17 +44,40 @@ export class UserController {
     forgotPassword = async (req: Request, res: Response) => {
         try {
             const input = forgotPasswordSchema.validateSync(req.body, { abortEarly: false, strict: true })
-
-
             console.log(input);
-
-
+            const result = await this.userService.forgotPassword(input)
+            res.status(200).json(result)
         }
-
         catch (error) {
-
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            } else if (error instanceof UserNotFoundException) {
+                res.status(400).json({ message: "user not found" })
+            }
+            else {
+                res.status(500).json({ message: "internal server error" })
+            }
         }
+    }
 
+    resetPassword = async (req: Request, res: Response) => {
+        try {
+            const input = resetPasswordSchema.validateSync(req.body, { abortEarly: false, strict: true })
+
+            const result = await this.userService.updatePassword(input)
+            res.status(200).json(result)
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors)
+            } else if (error instanceof InvalidOtpException) {
+                res.status(400).json({ message: "invalid otp" })
+            } else if (error instanceof OtpExpiredException) {
+                res.status(400).json({ message: "otp has expired" })
+            }
+            else {
+                res.status(500).json({ message: "internal server error" })
+            }
+        }
     }
 
 

@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import { db } from "./database-connection";
+import { db } from '../index'
 import { GENDER } from "../model"
 
 export class UserDb extends Model { }
@@ -33,8 +33,9 @@ UserDb.init(
         gender: {
             type: DataTypes.ENUM,
             allowNull: false,
-            values: Object.values(GENDER)
-
+            validate: {
+                isIn: [Object.values(GENDER)]
+            }
         },
         password: {
             type: DataTypes.STRING,
@@ -55,7 +56,22 @@ UserDb.init(
             allowNull: false,
             defaultValue: DataTypes.NOW,
             field: 'updated_at'
+        },
+        otp:{
+            type:DataTypes.STRING,
+            allowNull:true,
+            field:'otp'
+        },
+        otpExpiryTime:{
+            type:DataTypes.DATE,
+            allowNull:true,
+            field:'otp_expiry',
+        },
+        emailVerification:{
+            type:DataTypes.STRING,
+            
         }
+
     },
     {
         sequelize: db,
