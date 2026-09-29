@@ -1,5 +1,5 @@
-export class InvalidCredentialError extends Error {
+export class InvalidCredentialErrorException extends Error {
     constructor(message: string) {
-        super(message)
+        super(message);
     }
 }

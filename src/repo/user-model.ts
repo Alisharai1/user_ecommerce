@@ -1,6 +1,6 @@
-import { DataTypes, Model } from "sequelize";
-import { db } from '../index'
-import { GENDER } from "../model"
+import { DataTypes, Model } from 'sequelize';
+import { db } from '../index';
+import { GENDER } from '../model';
 
 export class UserDb extends Model { }
 
@@ -10,71 +10,69 @@ UserDb.init(
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             allowNull: false,
-            primaryKey: true
+            primaryKey: true,
         },
         firstName: {
             type: DataTypes.STRING,
             allowNull: false,
-            field: 'first_name'
+            field: 'first_name',
         },
         lastName: {
             type: DataTypes.STRING,
             allowNull: false,
-            field: 'last_name'
+            field: 'last_name',
         },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
             unique: true,
             validate: {
-                isEmail: true
-            }
+                isEmail: true,
+            },
         },
         gender: {
             type: DataTypes.ENUM,
             allowNull: false,
-            validate: {
-                isIn: [Object.values(GENDER)]
-            }
+            values: Object.values(GENDER),
         },
         password: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
         },
         phone: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
         },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
             allowNull: false,
-            field: 'created_at'
+            field: 'created_at',
         },
         updatedAt: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
-            field: 'updated_at'
+            field: 'updated_at',
         },
-        otp:{
-            type:DataTypes.STRING,
-            allowNull:true,
-            field:'otp'
+        otp: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            field: 'otp',
         },
-        otpExpiryTime:{
-            type:DataTypes.DATE,
-            allowNull:true,
-            field:'otp_expiry',
+        otpExpiryTime: {
+            type: DataTypes.DATE,
+            allowNull: true,
+            field: 'otp_expiry',
         },
-        emailVerification:{
-            type:DataTypes.STRING,
-            
-        }
-
+        emailVerification: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            field: 'email_verification',
+        },
     },
     {
         sequelize: db,
-        tableName: 'users'
-    }
-)
+        tableName: 'users',
+    },
+);

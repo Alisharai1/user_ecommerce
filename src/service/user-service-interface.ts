@@ -1,4 +1,4 @@
-import { GENDER, User } from "../model"
+import { GENDER, User } from '../model';
 
 
 export interface IUserService {
@@ -18,7 +18,7 @@ export interface IUserService {
 
     login(input: { email: string, password: string }): Promise<{ token: string, userId: string }>
 
-    forgotPassword(input: { email: string }): Promise<string>
+    forgotPassword(input: { email: string }): Promise<void>
 
-    updatePassword(input: { email: string, otp:string, newPassword: string }): Promise<string>
+    updatePassword(input: { email: string, otp: string, newPassword: string }): Promise<void>
 }

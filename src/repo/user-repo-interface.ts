@@ -1,4 +1,4 @@
-import { User } from "../model"
+import { User } from '../model';
 export interface IUserRepo {
 
     getUserById(id: string): Promise<User | null>
@@ -17,6 +17,8 @@ export interface IUserRepo {
 
     saveOtp(input: { id: string, otp: string, otpExpiryTime: Date }): Promise<void>
 
-    updatePassword(input: { id: string, hashedPassword: string }):Promise<void>
+    updatePassword(input: { id: string, hashedPassword: string }): Promise<void>
+
+    clearOtp(id: string): Promise<void>;
 
 }
