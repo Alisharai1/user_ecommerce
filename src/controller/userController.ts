@@ -45,6 +45,17 @@ export class UserController {
         return router;
     }
 
+
+    // login=async(req: Request, res: Response)=>{
+    //     try {
+    //         const result= loginSchema.validateSync(req.body,{abortEarly:false,strict:true})
+    //         const output= this.userService.login
+    //     } catch (error) {
+
+    //     }
+
+    // }
+
     forgotPassword = async (req: Request, res: Response) => {
         try {
             const input = forgotPasswordSchema.validateSync(req.body, { abortEarly: false, strict: true });

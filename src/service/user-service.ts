@@ -28,13 +28,22 @@ export class UserService implements IUserService {
         if (!existingUser) {
             throw new UserNotFoundException('user not found');
         }
-        if (!existingUser.otp || !existingUser.otpExpiryTime) {
+        const userCredential = await this.userRepo.getUserCredentialById(existingUser.id);
+
+        if (!userCredential) {
+            throw new UserNotFoundException('user not found');
+        }
+        if (!userCredential.otp) {
             throw new OtpNotFoundException('OTP not found');
         }
-        if (existingUser.otp !== input.otp) {
+        if (userCredential.otp !== input.otp) {
             throw new InvalidOtpException('invalid otp');
         }
-        if (new Date() > existingUser.otpExpiryTime) {
+        if (!userCredential.otpExpiryTime) {
+            throw new Error('otp expiry time not found');
+        }
+
+        if (new Date() > userCredential.otpExpiryTime) {
             throw new OtpExpiredException('otp has expired');
         }
         const hashedPassword = await bcryptjs.hash(input.newPassword, 10);
@@ -67,10 +76,16 @@ export class UserService implements IUserService {
 
     async login(input: { email: string; password: string; }): Promise<{ token: string; userId: string }> {
         const existingUser = await this.userRepo.getUserByEmail(input.email);
-        if (!existingUser || !existingUser.password) {
+        if (!existingUser) {
             throw new InvalidCredentialErrorException('invalid credentials');
         }
-        const output = await bcryptjs.compare(input.password, existingUser.password);
+        const userCredential = await this.userRepo.getUserCredentialById(existingUser.id);
+
+        if (!userCredential) {
+            throw new UserNotFoundException('user not found');
+        }
+
+        const output = await bcryptjs.compare(input.password, userCredential.password);
         if (!output) {
             throw new InvalidCredentialErrorException('invalid credentials');
         }
@@ -111,7 +126,8 @@ export class UserService implements IUserService {
         });
 
         await this.emailProvider.sendEmail({ email: newUser.email, subject: 'welcome onboard', html: `<h2> ${newUser.firstName} ${newUser.lastName}User has been created</h2>` });
-        return { ...newUser };
+
+        return newUser;
     }
 
     async getUserByEmail(email: string): Promise<User> {
@@ -122,7 +138,7 @@ export class UserService implements IUserService {
         return user;
     }
 
-    async updateUser(input: { id: string; firstName: string; lastName: string; }): Promise<User | null> {
+    async updateUser(input: { id: string; firstName: string; lastName: string; }): Promise<User> {
         const user = await this.userRepo.getUserById(input.id);
         if (!user) {
             throw new UserNotFoundException('user not found');
@@ -134,12 +150,12 @@ export class UserService implements IUserService {
         return { ...updatedUser };
     }
 
-    async deleteUser(id: string): Promise<boolean> {
+    async deleteUser(id: string): Promise<void> {
         const user = await this.userRepo.getUserById(id);
         if (!user) {
             throw new UserNotFoundException('user not found');
         }
-        return await this.userRepo.deleteUser(id);
+        await this.userRepo.deleteUser(id);
     }
 
 }
