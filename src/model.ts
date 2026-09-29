@@ -14,7 +14,7 @@ export type User = {
 }
 
 export enum GENDER {
-    MALE = "male",
-    FEMALE = "female",
-    OTHER = "other"
+    MALE = 'male',
+    FEMALE = 'female',
+    OTHER = 'other'
 }

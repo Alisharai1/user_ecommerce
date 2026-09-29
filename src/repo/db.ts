@@ -1,18 +1,18 @@
-import { Sequelize } from "sequelize";
+import { Sequelize } from 'sequelize';
 
 export class Database {
 
     static Connection(input: {
-        "dbName": string,
-        "userName": string,
-        "password": string,
-        "host": string
+        'dbName': string,
+        'userName': string,
+        'password': string,
+        'host': string
     }) {
         const db = new Sequelize(input.dbName, input.userName, input.password, {
             host: 'localhost',
-            dialect: "postgres"
-        })
-        return db
+            dialect: 'postgres',
+        });
+        return db;
     }
 
     static async TestConnection(db: Sequelize) {

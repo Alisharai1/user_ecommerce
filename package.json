@@ -9,18 +9,26 @@
     "dbMigrateUp": "db-migrate up",
     "dbMigrateDown": "db-migrate down",
     "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "format": "eslint .",
+    "format-fix": "eslint --fix"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.5.1",
+    "@types/nodemailer": "^8.0.2",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "jiti": "^2.7.0",
     "nodemon": "^3.1.14",
-    "typescript": "5.9"
+    "typescript": "5.9",
+    "typescript-eslint": "^8.71.0"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -29,7 +37,7 @@
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "nodemailer": "^10.0.10",
+    "nodemailer": "^10.0.12",
     "pg": "^8.23.0",
     "pg-hstore": "^2.3.4",
     "randomstring": "^1.3.1",
