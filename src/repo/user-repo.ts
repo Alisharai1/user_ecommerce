@@ -1,12 +1,23 @@
-import { User } from '../model';
+import { User, UserCredential } from '../model';
 import { IUserRepo } from './user-repo-interface';
 import { UserDb } from './user-model';
 
+
 export class UserRepo implements IUserRepo {
+
 
     async clearOtp(id: string): Promise<void> {
         await UserDb.update({ otp: null, otpExpiryTime: null }, { where: { id: id } });
     }
+
+    async getUserCredentialById(id: string): Promise<UserCredential | null> {
+        const user = await UserDb.findOne({ where: { id: id } });
+        if (!user) {
+            return null;
+        }
+        return user.toJSON<UserCredential>();
+    }
+
     async updatePassword(input: { id: string; hashedPassword: string; }): Promise<void> {
         await UserDb.update({ password: input.hashedPassword }, { where: { id: input.id } });
     }
@@ -35,7 +46,7 @@ export class UserRepo implements IUserRepo {
         return users.map((user) => user.toJSON<User>());
     }
 
-    async createUser(input: User): Promise<User> {
+    async createUser(input: User & UserCredential): Promise<User> {
         const user = await UserDb.create({ firstName: input.firstName, lastName: input.lastName, email: input.email, gender: input.gender, password: input.password, phone: input.phone });
         return user.toJSON<User>();
     }
@@ -65,7 +76,5 @@ export class UserRepo implements IUserRepo {
         await UserDb.destroy({ where: { id: id } });
         return true;
     }
-
-
-
 }
+

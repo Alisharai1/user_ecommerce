@@ -1,16 +1,18 @@
-
 export type User = {
-    otpExpiryTime: Date | null,
-    otp: string | null,
     id: string,
     firstName: string,
     lastName: string,
     email: string,
     gender: GENDER,
-    password: string|undefined,
     phone?: string,
     createdAt: Date,
     updatedAt: Date
+}
+
+export type UserCredential = {
+    password: string,
+    otpExpiryTime: Date | null,
+    otp: string | null,
 }
 
 export enum GENDER {

@@ -1,6 +1,11 @@
 import { object, number, string } from 'yup';
 import { GENDER } from '../model';
 
+export const loginSchema = object({
+    email: string().email().required(),
+    password: string().required().min(8).max(20),
+});
+
 export const forgotPasswordSchema = object({
     email: string().email().required(),
 });
