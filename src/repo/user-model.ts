@@ -74,5 +74,15 @@ UserDb.init(
     {
         sequelize: db,
         tableName: 'users',
+        defaultScope: {
+            attributes: {
+                exclude: [
+                    'password',
+                    'otp',
+                    'otpExpiryTime',
+                    'emailVerification',
+                ],
+            },
+        },
     },
 );

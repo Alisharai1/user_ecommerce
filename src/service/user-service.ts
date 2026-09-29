@@ -36,7 +36,8 @@ export class UserService implements IUserService {
         if (!userCredential.otp) {
             throw new OtpNotFoundException('OTP not found');
         }
-        if (userCredential.otp !== input.otp) {
+        
+        if (userCredential.otp.toString() !== input.otp) {
             throw new InvalidOtpException('invalid otp');
         }
         if (!userCredential.otpExpiryTime) {
@@ -68,7 +69,7 @@ export class UserService implements IUserService {
 
         await this.emailProvider.sendEmail({
             email: input.email,
-            html: `<h1> Hello ${existingUser.firstName} ${existingUser.lastName} user created </h1>`,
+            html: `<h1> Hello ${existingUser.firstName} ${existingUser.lastName} Use reset OTP ${otp} of this email </h1>`,
             subject: 'Password Reset OTP',
         });
 
@@ -105,7 +106,8 @@ export class UserService implements IUserService {
         const limit = input.limit || 5;
         const offset = limit * (input.page - 1);
         const users = await this.userRepo.query({ limit: input.limit || 5, offset });
-        return users.map((user) => user);
+
+        return users;
     }
 
     async createUser(input: { firstName: string, lastName: string, email: string, gender: GENDER, password: string, phone?: string }): Promise<User> {
@@ -125,9 +127,14 @@ export class UserService implements IUserService {
             otp: null,
         });
 
-        await this.emailProvider.sendEmail({ email: newUser.email, subject: 'welcome onboard', html: `<h2> ${newUser.firstName} ${newUser.lastName}User has been created</h2>` });
+        const user = await this.userRepo.getUserById(newUser.id);
+        if (!user) {
+            throw new UserNotFoundException('user does not exist');
+        }
 
-        return newUser;
+        await this.emailProvider.sendEmail({ email: user.email, subject: 'welcome onboard', html: `<h2> ${user.firstName} ${user.lastName} User has been created</h2>` });
+
+        return user;
     }
 
     async getUserByEmail(email: string): Promise<User> {
@@ -147,7 +154,7 @@ export class UserService implements IUserService {
         if (!updatedUser) {
             throw new UserNotFoundException('user not found');
         }
-        return { ...updatedUser };
+        return updatedUser;
     }
 
     async deleteUser(id: string): Promise<void> {
