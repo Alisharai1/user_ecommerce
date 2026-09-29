@@ -84,6 +84,7 @@ export class UserController {
             const result = await this.userService.updatePassword(input);
             res.status(200).json(result);
         } catch (error) {
+            console.log(error);
             if (error instanceof ValidationError) {
                 res.status(400).json(error.errors);
             } else if (error instanceof InvalidOtpException) {

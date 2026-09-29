@@ -5,16 +5,19 @@ import { UserDb } from './user-model';
 
 export class UserRepo implements IUserRepo {
 
-
     async clearOtp(id: string): Promise<void> {
         await UserDb.update({ otp: null, otpExpiryTime: null }, { where: { id: id } });
     }
 
     async getUserCredentialById(id: string): Promise<UserCredential | null> {
-        const user = await UserDb.findOne({ where: { id: id } });
+        const user = await UserDb.findOne({
+            where: { id: id }, attributes
+            : ['password', 'otpExpiryTime', 'otp'],
+        });
         if (!user) {
             return null;
         }
+        
         return user.toJSON<UserCredential>();
     }
 
