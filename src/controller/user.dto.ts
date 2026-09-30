@@ -10,6 +10,11 @@ export const forgotPasswordSchema = object({
     email: string().email().required(),
 });
 
+export const loginUserSchema = object({
+    email: string().email().required(),
+    password: string().required().min(8).max(20),
+});
+
 export const resetPasswordSchema = object({
     email: string().email().required(),
     otp: string().min(6).max(12).required(),
