@@ -9,7 +9,7 @@ import {
     deleteUserByIdParamsSchema,
     forgotPasswordSchema,
     resetPasswordSchema,
-    LoginUserBodySchema,
+    loginUserSchema,
 }
     from './user.dto';
 import { ValidationError } from 'yup';
@@ -19,6 +19,7 @@ import { UserNotFoundException } from '../exception/user-not-found';
 import { InvalidOtpException } from '../exception/Invalidotp';
 import { OtpExpiredException } from '../exception/otpexpired';
 import { InvalidCredentialErrorException } from '../exception/Invalid-cred';
+import { authentication } from '../auth/authentication';
 import { OtpNotFoundException } from '../exception/otp-not-found';
 
 
@@ -33,28 +34,35 @@ export class UserController {
         const router = Router();
         const controller = new UserController(userService);
         router.post('/', controller.createUser);
+        router.post('/forgot-password', controller.forgotPassword);
+        router.post('/reset-password', controller.resetPassword);
+        router.post('/login', controller.loginUser);
+        router.use(authentication);
         router.get('/useremail', controller.getUserByEmail);
         router.get('/:id', controller.getUserById);
         router.get('/', controller.getAllUsers);
         router.put('/:id', controller.updateUser);
         router.delete('/:id', controller.deleteUser);
-        router.post('/forgot-password', controller.forgotPassword);
-        router.post('/reset-password', controller.resetPassword);
-        router.post('/login', controller.loginUser);
 
         return router;
     }
 
-
-    // login=async(req: Request, res: Response)=>{
-    //     try {
-    //         const result= loginSchema.validateSync(req.body,{abortEarly:false,strict:true})
-    //         const output= this.userService.login
-    //     } catch (error) {
-
-    //     }
-
-    // }
+    loginUser = async (req: Request, res: Response) => {
+        try {
+            const input = loginUserSchema.validateSync(req.body, { abortEarly: false, strict: true });
+            const result = await this.userService.login(input);
+            res.status(200).json(result);
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                res.status(400).json(error.errors);
+            }
+            else if (error instanceof InvalidCredentialErrorException) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json('internal server error');
+            }
+        }
+    };
 
     forgotPassword = async (req: Request, res: Response) => {
         try {
@@ -100,7 +108,6 @@ export class UserController {
         }
     };
 
-
     createUser = async (req: Request, res: Response) => {
         try {
             const input = createUserBodySchema.validateSync(req.body, { abortEarly: false, strict: true });
@@ -108,7 +115,6 @@ export class UserController {
             const user = await this.userService.createUser(input);
             res.status(200).json(user);
         } catch (error) {
-            console.log('hiiiiii', error);
 
             if (error instanceof ValidationError) {
                 res.status(400).json(error.errors);
@@ -224,29 +230,6 @@ export class UserController {
         }
     };
 
-
-    loginUser = async (request: Request, res: Response) => {
-        try {
-            const input = LoginUserBodySchema.validateSync(request.body, {
-                abortEarly: false,
-                strict: true,
-            });
-            const output = await this.userService.login(input);
-            res.status(200).json(output);
-
-        } catch (error) {
-            if (error instanceof ValidationError) {
-                res.status(400).json(error.errors);
-            }
-            else if (error instanceof InvalidCredentialErrorException) {
-                res.status(404).json({ message: error.message });
-            } else {
-                res.status(500).json('internal server error');
-            }
-
-        }
-
-    };
 }
 
 
